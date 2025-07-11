@@ -1,18 +1,10 @@
-THIS SHOULD BE A LINTER ERRORimport pandas as pd
+import pandas as pd
 import numpy as np
-from datetime import datetime
 import matplotlib.pyplot as plt
+from typing import Optional, Tuple
+from utils import parse_year, rearrange_data
 
-def parse_year(year_str):
-    """Convert a year string (e.g., '201103') to a readable format (e.g., 'Mar-2011')."""
-    try:
-        year = int(year_str[:4])
-        month = int(year_str[4:])
-        return datetime(year, month, 1).strftime('%b-%Y')
-    except:
-        return year_str
-
-def load_cash_flow_file(file):
+def load_cash_flow_file(file) -> Optional[pd.DataFrame]:
     """Load and preprocess the Cash Flow Excel file."""
     try:
         df = pd.read_excel(file, engine='xlrd', skiprows=5, header=None)
@@ -30,13 +22,7 @@ def load_cash_flow_file(file):
         print(f"Error loading Cash Flow file: {e}")
         return None
 
-def rearrange_data(df):
-    """Rearrange the data with years as rows and metrics as columns."""
-    if df is None:
-        return None
-    return df.T
-
-def analyze_cash_flow(df):
+def analyze_cash_flow(df: Optional[pd.DataFrame]) -> Optional[pd.DataFrame]:
     """Analyze the Cash Flow data, calculating growth rates and ratios."""
     if df is None:
         return None
@@ -50,7 +36,7 @@ def analyze_cash_flow(df):
         analysis['Op. CF to Inv. CF Ratio'] = df['Net Cash from Operating Activities'] / df['Net Cash Used in Investing Activities'].replace(0, np.nan)
     return pd.DataFrame(analysis)
 
-def visualize_trends(df):
+def visualize_trends(df: Optional[pd.DataFrame]):
     """Visualize trends in Cash Flow data."""
     if df is None:
         return None
@@ -69,7 +55,7 @@ def visualize_trends(df):
     plt.tight_layout()
     return fig
 
-def process_cash_flow_file(file):
+def process_cash_flow_file(file) -> Tuple[Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[plt.Figure]]:
     """Tie together all steps for Cash Flow analysis."""
     cash_flow_df = load_cash_flow_file(file)
     if cash_flow_df is None:

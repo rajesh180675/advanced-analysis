@@ -1,18 +1,10 @@
 import pandas as pd
 import numpy as np
-from datetime import datetime
 import matplotlib.pyplot as plt
+from typing import Optional, Tuple
+from utils import parse_year
 
-def parse_year(year_str):
-    """Convert a year string to a readable format."""
-    try:
-        year = int(year_str[:4])
-        month = int(year_str[4:])
-        return datetime(year, month, 1).strftime('%b-%Y')
-    except:
-        return year_str
-
-def load_balance_sheet_file(file):
+def load_balance_sheet_file(file) -> Optional[pd.DataFrame]:
     """Load and preprocess the Balance Sheet Excel file."""
     try:
         df = pd.read_excel(file, engine='xlrd', header=None)
@@ -32,13 +24,13 @@ def load_balance_sheet_file(file):
         print(f"Error loading Balance Sheet file: {e}")
         return None
 
-def rearrange_data(df):
-    """Rearrange the data with years as rows and metrics as columns."""
+def rearrange_data(df: Optional[pd.DataFrame]) -> Optional[pd.DataFrame]:
+    """Rearrange the data with years as rows and metrics as columns for balance sheet."""
     if df is None:
         return None
     return df.set_index('Item').T
 
-def analyze_balance_sheet(df):
+def analyze_balance_sheet(df: Optional[pd.DataFrame]) -> Optional[pd.DataFrame]:
     """Analyze the Balance Sheet data, calculating ratios and growth rates."""
     if df is None:
         return None
@@ -54,7 +46,7 @@ def analyze_balance_sheet(df):
             analysis[f'{item} YoY Growth (%)'] = growth
     return pd.DataFrame(analysis)
 
-def visualize_trends(df):
+def visualize_trends(df: Optional[pd.DataFrame]):
     """Visualize trends in Balance Sheet data."""
     if df is None:
         return None
@@ -73,7 +65,7 @@ def visualize_trends(df):
     plt.tight_layout()
     return fig
 
-def process_balance_sheet_file(file):
+def process_balance_sheet_file(file) -> Tuple[Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[plt.Figure]]:
     """Tie together all steps for Balance Sheet analysis."""
     balance_sheet_df = load_balance_sheet_file(file)
     if balance_sheet_df is None:

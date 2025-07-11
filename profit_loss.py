@@ -1,18 +1,10 @@
 import pandas as pd
 import numpy as np
-from datetime import datetime
 import matplotlib.pyplot as plt
+from typing import Optional, Tuple
+from utils import parse_year, rearrange_data
 
-def parse_year(year_str):
-    """Convert a year string to a readable format."""
-    try:
-        year = int(year_str[:4])
-        month = int(year_str[4:])
-        return datetime(year, month, 1).strftime('%b-%Y')
-    except:
-        return year_str
-
-def load_profit_loss_file(file):
+def load_profit_loss_file(file) -> Optional[pd.DataFrame]:
     """Load and preprocess the Profit and Loss Excel file."""
     try:
         df = pd.read_excel(file, engine='xlrd', skiprows=5, header=None)
@@ -30,13 +22,7 @@ def load_profit_loss_file(file):
         print(f"Error loading Profit and Loss file: {e}")
         return None
 
-def rearrange_data(df):
-    """Rearrange the data with years as rows and metrics as columns."""
-    if df is None:
-        return None
-    return df.T
-
-def analyze_profit_loss(df):
+def analyze_profit_loss(df: Optional[pd.DataFrame]) -> Optional[pd.DataFrame]:
     """Analyze the Profit and Loss data, calculating growth rates and margins."""
     if df is None:
         return None
@@ -50,7 +36,7 @@ def analyze_profit_loss(df):
         analysis['Operating Profit Margin (%)'] = (df['Operating Profit'] / df['Net Sales']) * 100
     return pd.DataFrame(analysis)
 
-def visualize_trends(df):
+def visualize_trends(df: Optional[pd.DataFrame]):
     """Visualize trends in Profit and Loss data."""
     if df is None:
         return None
@@ -69,7 +55,7 @@ def visualize_trends(df):
     plt.tight_layout()
     return fig
 
-def process_profit_loss_file(file):
+def process_profit_loss_file(file) -> Tuple[Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[pd.DataFrame], Optional[plt.Figure]]:
     """Tie together all steps for Profit and Loss analysis."""
     profit_loss_df = load_profit_loss_file(file)
     if profit_loss_df is None:
